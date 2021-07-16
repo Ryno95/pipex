@@ -1,11 +1,11 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
-
 
 #define PIPE_STANDARD_ARRAY_SIZE 2
 #define READ_FD 0
@@ -13,78 +13,84 @@
 #define CHILD_PROCESS_ID 0
 #define SYSTEM_ERR -1
 
-int sum_of_part_of_array(int *array, int start, int end)
-{
-	int i;
-	int sum;
+// int sum_of_part_of_array(int *array, int start, int end)
+// {
+// 	int i;
+// 	int sum;
 
-	if (!array)
-		return (-1);
-	i = start;
-	sum = 0;
-	while (i < end)
-	{
-		sum += array[i]; 
-		i++;
-	}
-	return (sum);
-}
+// 	if (!array)
+// 		return (-1);
+// 	i = start;
+// 	sum = 0;
+// 	while (i < end)
+// 	{
+// 		sum += array[i]; 
+// 		i++;
+// 	}
+// 	return (sum);
+// }
 
-static void close_multiple(int *multi_fd)
-{
-	close(multi_fd[READ_FD]);
-	close(multi_fd[WRITE_FD]);
-}
-static int get_sum_of_child(int *fd)
-{
-	int sum_of_child;
+// static void close_multiple(int *multi_fd)
+// {
+// 	close(multi_fd[READ_FD]);
+// 	close(multi_fd[WRITE_FD]);
+// }
+// static int get_sum_of_child(int *fd)
+// {
+// 	int sum_of_child;
 
-	sum_of_child = 0;
-	if (read(fd[READ_FD], &sum_of_child, sizeof(int)) == SYSTEM_ERR)
-		return (-1);
-	return(sum_of_child);
-}
+// 	sum_of_child = 0;
+// 	if (read(fd[READ_FD], &sum_of_child, sizeof(int)) == SYSTEM_ERR)
+// 		return (-1);
+// 	return(sum_of_child);
+// }
 
 int execute_command(const char *path, const char *argv[])
 {
 	return (execve(path, (char *const *)argv, NULL));
 }
 
-int child_process()
+int child_process(const char *argv[])
 {
+	int fd;
+	int fd2;
+
+	fd = open("results.txt", O_WRONLY | O_CREAT, 0777);
+	if (fd == -1)
+		exit(3);
+		
+	fd2 = dup2(fd, STDOUT_FILENO);
+	if (fd2 != STDOUT_FILENO)
+		return (4);
+
+	if (execute_command(argv[0], argv) == -1)
+		return (-1);
+	close(fd);
+	close(fd2);
 	return (1);
 }
 
 int parent_process()
 {
 	int wstatus;
-
-	wstatus = wait(&wstatus);
-	if (WIFEXITED(wstatus))
-	{
-		int status_code = WEXITSTATUS(wstatus);
-		if (status_code == 0)
-			printf("SUCCESS!");
-		else
-			printf("exited with status code: %d\n", status_code);
-	}
+	wait(&wstatus);
+	int status_code = WEXITSTATUS(wstatus);
+	if (status_code == 0)
+		printf("SUCCESS!");
+	else
+		printf("Failure code with status code: %d\n", WEXITSTATUS(wstatus));
 	return (1);
 }
 
 int main(void)
 {
-	const char *argv[] = {"/bin/ls", "-", NULL};
+	const char *argv[] = {"/sbin/ping", "-c", "1", "google.com", NULL};
 	const int pid = fork();
 
-	if (pid == CHILD_PROCESS_ID)
-	{
-		int err = execute_command(argv[0], argv);
-		if (err == -1)
-		{
-			printf("Couldn't find program to execute\n");
-			return (-1);
-		}
-	}
+	if (pid == SYSTEM_ERR)
+		return (2);
+	else if (pid == CHILD_PROCESS_ID)
+		child_process(argv);
 	else
 		parent_process();
 }
