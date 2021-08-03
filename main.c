@@ -48,11 +48,12 @@
 // 	return (1);
 // }
 
-int	main(void)
+int	main()
 {
 	int	fd[PIPE_BOTH_ENDS];
 	int	pid1;
 	int	pid2;
+
 
 	if (pipe(fd) == ERROR)
 		return (1);
@@ -78,13 +79,13 @@ int	main(void)
 	{
 		// child process 2, execute second command ("grep round"in this case)
 		// char *argv[] = {"/bin/grep", "-e", NULL};
-		// char *lsargv[] = {"/bin/ls", "-la", NULL};
+		char *lsargv[] = {"/bin/ls", "-la", NULL};
 		dup2(fd[READ_FD], STDIN_FILENO);
 		close(fd[READ_FD]);
 		close(fd[WRITE_FD]);
-		// char *env[] = {"PWD=", NULL};
-		// if (execve(argv[0], argv, env) == ERROR)
-		if (execlp("grep", "grep", "round", NULL) == ERROR)
+		char *env[] = {"PWD=", NULL};
+		if (execve(lsargv[0], lsargv, env) == ERROR)
+		// if (execlp("grep", "grep", "round", NULL) == ERROR)
 		{
 			printf("Well that's not right.....\n");
 			return (7);
