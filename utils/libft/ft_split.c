@@ -13,6 +13,19 @@
 #include "libft.h"
 #include <stdio.h>
 
+void	ft_free_split(char **split_array)
+{
+	int	i;
+
+	i = 0;
+	while (split_array[i])
+	{
+		free(split_array[i]);
+		i++;
+	}
+	free(split_array);
+}
+
 static int	get_delimiter_count(char const *s, char c)
 {
 	int	i;
@@ -31,7 +44,7 @@ static int	get_delimiter_count(char const *s, char c)
 	return (count);
 }
 
-static void	free_split(char **split_array, int count)
+void	free_split(char **split_array, int count)
 {
 	while (count >= 0)
 	{

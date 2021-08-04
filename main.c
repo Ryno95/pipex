@@ -84,8 +84,11 @@
 // 	return (0);
 // }
 
-int	main(int argc, char *argv[], char *env[])
+int	main(int argc, const char *argv[], const char *env[])
 {
 	run(argc, argv, env);
 	return (0);
 }
+
+// ./pipex infile ``grep a1'' ``wc -w'' outfile
+// < infile grep a1 | wc -w > outfile
