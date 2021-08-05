@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
-#include "utils/libft/libft.h"
+#include "srcs/utils/libft/libft.h"
 
 #define PIPE_BOTH_ENDS 2
 #define READ_FD 0
@@ -15,6 +15,9 @@
 #define ERROR -1
 #define PERMISSIONS 0644
 #define SPACE ' '
+#define COLON ':'
+#define FORWARD_SLASH "/\0"
+#define PATH_ID "PATH="
 
 typedef enum e_stdin_out
 {
@@ -36,3 +39,6 @@ typedef enum e_errors
 
 void	run(int argc, const char *argv[], const char *env[]);
 t_bool  is_valid_arguments(int argc, const char *argv[]);
+char    *get_executable_path(const char *env, const char *cmd);
+char	*ft_get_env_var(const char *env[], const char *env_variable);
+void	handle_errors(int error_code);
