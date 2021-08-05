@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-CC = clang
+CC = gcc
 NAME = pipex
 CFLAGS = -Wall -Werror -Wextra
 TESTER = tester
