@@ -17,7 +17,7 @@ jobs:
           command: 'echo Building'
       - run:
           name: Unit-Test
-          command: "make test_run"
+          command: "make run_tests"
       - run:
           name: Norminette
           command: norminette srcs
