@@ -17,6 +17,7 @@
 #define SPACE ' '
 #define COLON ':'
 #define FORWARD_SLASH "/\0"
+#define PATH_ID "PATH="
 
 typedef enum e_stdin_out
 {
@@ -39,3 +40,4 @@ typedef enum e_errors
 void	run(int argc, const char *argv[], const char *env[]);
 t_bool  is_valid_arguments(int argc, const char *argv[]);
 char    *get_executable_path(const char *env, const char *cmd);
+char	*ft_get_env_var(const char *env[], const char *env_variable);
