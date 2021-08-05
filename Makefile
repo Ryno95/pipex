@@ -23,9 +23,9 @@ ACTIONSDIR = srcs/actions/
 UTILSDIR = utils/
 
 OBJ = $(GNLDIR)get_next_line.o $(GNLDIR)get_next_line_utils.o\
-		srcs/pipex.o
+		srcs/pipex.o srcs/get_exe_path.o
 
-TEST_OBJ = tests/test_args.o tests/main.o
+TEST_OBJ = tests/test_args.o tests/main.o tests/test_get_path.o
 
 CHECKER_OBJ = bonus/main.o
 

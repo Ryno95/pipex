@@ -15,6 +15,8 @@
 #define ERROR -1
 #define PERMISSIONS 0644
 #define SPACE ' '
+#define COLON ':'
+#define FORWARD_SLASH "/\0"
 
 typedef enum e_stdin_out
 {
@@ -36,3 +38,4 @@ typedef enum e_errors
 
 void	run(int argc, const char *argv[], const char *env[]);
 t_bool  is_valid_arguments(int argc, const char *argv[]);
+char    *get_executable_path(const char *env, const char *cmd);

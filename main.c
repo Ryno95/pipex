@@ -86,7 +86,11 @@
 
 int	main(int argc, const char *argv[], const char *env[])
 {
-	run(argc, argv, env);
+	(void)argv;
+	(void)argc;
+	(void)env;
+	// run(argc, argv, env);
+	get_executable_path("PATH=/Users/rmeiboom/.brew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Users/rmeiboom/.brew/bin", "ls");
 	return (0);
 }
 
