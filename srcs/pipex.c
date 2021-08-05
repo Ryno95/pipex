@@ -32,20 +32,25 @@ int	child_process(int *fd, const char *argv[], const char *env[])
 {
 	const int	infile = open(argv[1], O_RDONLY);
 	// const int	outfile = open("results.txt", O_WRONLY | O_CREAT, PERMISSIONS);
+	const char	*path_var = ft_get_env_var(env, PATH_ID);
 	const char	**cmd = (const char **)ft_split(argv[2], SPACE);
+	char		*path;
 
 	if (!infile)
 		handle_errors(FD_ERROR);
 	close(fd[READ_FD]);
 	dup2(infile, STDIN_FD);
-	dup2(fd[WRITE_FD], STDOUT_FILENO);
+	dup2(fd[WRITE_FD], STDOUT_FD);
 	if (!cmd)
 		handle_errors(MALLOC_ERROR);
 	// find path in env
 	// get right path
 	// execute the command
 	// get_executable_path(cmd[0], env)
-	if(execute_command("/bin/ls", cmd, env) == ERROR)
+	path = get_executable_path(path_var, cmd[0]);
+	if (!path)
+		handle_errors(MALLOC_ERROR);
+	if(execute_command(path, cmd, env) == ERROR)
 		printf("Shoiiiiit\n");
 	close_multiple(fd[READ_FD], fd[WRITE_FD]);
 	// ft_free_split((char **)cmd);
@@ -56,12 +61,14 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 {
 	const int	outfile = open(argv[4], O_WRONLY | O_CREAT, PERMISSIONS);
 	const char	**cmd = (const char **)ft_split(argv[3], SPACE);
+	const char	*path_var = ft_get_env_var(env, PATH_ID);
+	char		*path;
 	
 	close(fd[WRITE_FD]);
 	dup2(fd[READ_FD], STDIN_FD);
 	dup2(outfile, STDOUT_FILENO);
-
-	if (execute_command("/usr/bin/wc", cmd, env) == ERROR)
+	path = get_executable_path(path_var, cmd[0]);
+	if (execute_command(path, cmd, env) == ERROR)
 		printf("FUCKUP\n");
 
 	return (0);
