@@ -86,14 +86,6 @@
 
 int	main(int argc, const char *argv[], const char *env[])
 {
-	(void)argv;
-	(void)argc;
-	(void)env;
 	run(argc, argv, env);
-	// printf("%s\n", get_executable_path(ft_get_env_var(env, PATH_ID), "ls"));
 	return (0);
 }
-
-
-// ./pipex infile ``grep a1'' ``wc -w'' outfile
-// < infile grep a1 | wc -w > outfile

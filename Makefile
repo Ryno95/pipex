@@ -15,15 +15,14 @@ NAME = pipex
 CFLAGS = -Wall -Werror -Wextra
 TESTER = tester
 CHECKER = checker
-LIBS = utils/libft/libft.a  utils/ft_printf/libftprintf.a
-LIBFTDIR = utils/libft/
-FT_PRINTFDIR = utils/ft_printf/
-GNLDIR = utils/gnl/
-ACTIONSDIR = srcs/actions/
-UTILSDIR = utils/
+LIBS = srcs/utils/libft/libft.a  srcs/utils/ft_printf/libftprintf.a
+LIBFTDIR = srcs/utils/libft/
+FT_PRINTFDIR = srcs/utils/ft_printf/
+GNLDIR = srcs/utils/gnl/
+UTILSDIR = srcs/utils/
 
 OBJ = $(GNLDIR)get_next_line.o $(GNLDIR)get_next_line_utils.o\
-		srcs/pipex.o srcs/get_exe_path.o
+		srcs/pipex.o srcs/get_exe_path.o srcs/handle_errors.o\
 
 TEST_OBJ = tests/test_args.o tests/main.o tests/test_get_path.o
 
