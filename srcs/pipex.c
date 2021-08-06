@@ -19,18 +19,18 @@ int	child_process(int *fd, const char *argv[], const char *env[])
 	const char	**cmd = (const char **)ft_split(argv[2], SPACE);
 	char		*path;
 
-	if (!infile)
-		handle_errors(FD_ERROR);
+	if (infile == ERROR)
+		handle_errors(FD_ERROR, "child_process");
 	close(fd[READ_FD]);
 	dup2(infile, STDIN_FD);
 	dup2(fd[WRITE_FD], STDOUT_FD);
 	if (!cmd)
-		handle_errors(MALLOC_ERROR);
+		handle_errors(MALLOC_ERROR, "child_process");
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
-		handle_errors(MALLOC_ERROR);
+		handle_errors(MALLOC_ERROR, "child_process");
 	if (execute_command(path, cmd, env) == ERROR)
-		printf("Shoiiiiit\n");
+		handle_errors(EXECUTION_ERROR, "child_process");
 	return (0);
 }
 
@@ -46,7 +46,7 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 	dup2(outfile, STDOUT_FILENO);
 	path = get_executable_path(path_var, cmd[0]);
 	if (execute_command(path, cmd, env) == ERROR)
-		printf("FUCKUP\n");
+		handle_errors(EXECUTION_ERROR, "parent_process");
 	return (0);
 }
 
@@ -56,17 +56,19 @@ void	run(int argc, const char *argv[], const char *env[])
 	int	fd[PIPE_BOTH_ENDS];
 
 	if (!is_valid_arguments(argc, argv) || pipe(fd) == ERROR)
-		handle_errors(1);
+		handle_errors(1, "run");
 	pid = fork();
 	if (pid == ERROR)
-		handle_errors(2);
+		perror("pidfuckup");
 	else if (pid == CHILD_PROCESS_ID)
 		child_process(fd, argv, env);
 	else
 	{
+		// pid = fork();
+		// // if (pid == CHILD_PROCESS_ID)
+		// // 	child_process
 		wait(NULL);
 		parent_process(fd, argv, env);
-		printf("END of parent proccess\n");
 	}
 	close(fd[READ_FD]);
 	close(fd[WRITE_FD]);
