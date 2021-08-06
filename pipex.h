@@ -34,11 +34,12 @@ typedef enum e_bool
 typedef enum e_errors
 {
 	FD_ERROR = 10,
-	MALLOC_ERROR = 11
+	MALLOC_ERROR = 11,
+	EXECUTION_ERROR = 12
 }	t_errors;
 
 void	run(int argc, const char *argv[], const char *env[]);
 t_bool  is_valid_arguments(int argc, const char *argv[]);
 char    *get_executable_path(const char *env, const char *cmd);
 char	*ft_get_env_var(const char *env[], const char *env_variable);
-void	handle_errors(int error_code);
+void	handle_errors(int error_code, char *location);
