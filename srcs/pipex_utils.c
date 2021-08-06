@@ -1,6 +1,14 @@
 #include "../pipex.h"
 #include "utils/gnl/get_next_line.h"
 
+int	redirect_stdin_and_stdout(int new_stdin, int new_stdout)
+{
+	if (dup2(new_stdin, STDIN_FD) == ERROR)	
+		return (0);
+	if (dup2(new_stdout, STDOUT_FD) == ERROR)	
+		return (0);
+	return (1);
+}
 char	*ft_get_env_var(const char *env[], const char *env_variable)
 {
 	const int	var_len = ft_strlen(env_variable);

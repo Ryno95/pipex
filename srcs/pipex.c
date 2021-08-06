@@ -19,13 +19,11 @@ int	child_process(int *fd, const char *argv[], const char *env[])
 	const char	**cmd = (const char **)ft_split(argv[2], SPACE);
 	char		*path;
 
-	if (infile == ERROR)
-		handle_errors(FD_ERROR, "child_process");
+	if (infile == ERROR || !cmd)
+		handle_errors(SAFETY, "child_process");
 	close(fd[READ_FD]);
-	dup2(infile, STDIN_FD);
-	dup2(fd[WRITE_FD], STDOUT_FD);
-	if (!cmd)
-		handle_errors(MALLOC_ERROR, "child_process");
+	if (!redirect_stdin_and_stdout(infile, fd[WRITE_FD]))
+		handle_errors(FD_ERROR, "child_process");
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
 		handle_errors(MALLOC_ERROR, "child_process");
@@ -41,10 +39,14 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 	const char	*path_var = ft_get_env_var(env, PATH_ID);
 	char		*path;
 
+	if (!cmd || outfile == ERROR)
+		handle_errors(SAFETY, "parent_process");
 	close(fd[WRITE_FD]);
-	dup2(fd[READ_FD], STDIN_FD);
-	dup2(outfile, STDOUT_FILENO);
+	if (!redirect_stdin_and_stdout(fd[READ_FD], outfile))
+		handle_errors(SAFETY, "parent_process");
 	path = get_executable_path(path_var, cmd[0]);
+	if (!path)
+		handle_errors(MALLOC_ERROR, "parent_process");
 	if (execute_command(path, cmd, env) == ERROR)
 		handle_errors(EXECUTION_ERROR, "parent_process");
 	return (0);
@@ -52,22 +54,23 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 
 void	run(int argc, const char *argv[], const char *env[])
 {
-	int	pid;
+	int	pid[2];
 	int	fd[PIPE_BOTH_ENDS];
 
 	if (!is_valid_arguments(argc, argv) || pipe(fd) == ERROR)
 		handle_errors(1, "run");
-	pid = fork();
-	if (pid == ERROR)
-		perror("pidfuckup");
-	else if (pid == CHILD_PROCESS_ID)
+	pid[0] = fork();
+	if (pid[0] == ERROR)
+		handle_errors(ERROR, "main");
+	else if (pid[0] == CHILD_PROCESS_ID)
 		child_process(fd, argv, env);
 	else
 	{
-		// pid = fork();
+		// pid[] = fork();
 		// // if (pid == CHILD_PROCESS_ID)
 		// // 	child_process
-		wait(NULL);
+		waitpid(pid[0], NULL, 0);
+		// waitpid(pid[1], NULL, 0);
 		parent_process(fd, argv, env);
 	}
 	close(fd[READ_FD]);

@@ -22,7 +22,7 @@ GNLDIR = srcs/utils/gnl/
 UTILSDIR = srcs/utils/
 
 OBJ = $(GNLDIR)get_next_line.o $(GNLDIR)get_next_line_utils.o\
-		srcs/pipex.o srcs/get_exe_path.o srcs/handle_errors.o\
+		srcs/pipex.o srcs/pipex_utils.o srcs/handle_errors.o\
 
 TEST_OBJ = tests/main.o tests/test_args.o tests/test_get_path.o
 

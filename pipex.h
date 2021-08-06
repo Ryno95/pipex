@@ -35,7 +35,8 @@ typedef enum e_errors
 {
 	FD_ERROR = 10,
 	MALLOC_ERROR = 11,
-	EXECUTION_ERROR = 12
+	EXECUTION_ERROR = 12,
+	SAFETY = 13
 }	t_errors;
 
 void	run(int argc, const char *argv[], const char *env[]);
