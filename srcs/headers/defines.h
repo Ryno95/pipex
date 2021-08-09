@@ -1,7 +1,7 @@
 #ifndef DEFINES_H
 # define DEFINES_H
 
-#include "utils/libft/libft.h"
+#include "../utils/libft/libft.h"
 
 # define CHILD_PROCESS_ID 0
 # define ERROR -1

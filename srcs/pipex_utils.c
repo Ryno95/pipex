@@ -1,4 +1,4 @@
-#include "defines.h"
+#include "headers/defines.h"
 
 int	redirect_stdin_and_stdout(int new_stdin, int new_stdout)
 {
