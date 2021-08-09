@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "utils/gnl/get_next_line.h"
 #include <unistd.h>
 
 char	*ft_get_env_var(const char *env[], const char *env_variable)

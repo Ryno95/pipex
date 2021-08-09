@@ -1,4 +1,4 @@
-#include "../pipex.h"
+#include "pipex.h"
 
 int	execute_command(const char *path, const char *argv[], const char *env[])
 {

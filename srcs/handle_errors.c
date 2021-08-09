@@ -1,4 +1,4 @@
-#include "../headers/handle_errors.h"
+#include "handle_errors.h"
 
 void	handle_errors(int error_code, char *location)
 {

@@ -8,8 +8,9 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include <sys/types.h>
-# include "srcs/utils/libft/libft.h"
 # include "defines.h"
+# include "pipex_utils.h"
+# include "get_exe_path.h"
 
 void	run(int argc, const char *argv[], const char *env[]);
 t_bool	is_valid_arguments(int argc, const char *argv[]);

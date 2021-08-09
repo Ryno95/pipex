@@ -6,7 +6,7 @@
 #    By: rmeiboom <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/05/15 16:56:30 by rmeiboom      #+#    #+#                  #
-#    Updated: 2021/07/08 14:15:05 by rmeiboom      ########   odam.nl          #
+#    Updated: 2021/08/09 13:07:56 by rmeiboom      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ UTILSDIR = srcs/utils/
 
 OBJ = $(GNLDIR)get_next_line.o $(GNLDIR)get_next_line_utils.o\
 		srcs/pipex.o srcs/pipex_utils.o srcs/handle_errors.o\
+		srcs/get_exe_path.o
 
 TEST_OBJ = tests/main.o tests/test_args.o tests/test_get_path.o
 
