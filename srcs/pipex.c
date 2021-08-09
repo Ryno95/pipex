@@ -8,15 +8,8 @@ int	execute_command(const char *path, const char *argv[], const char *env[])
 t_bool	is_valid_arguments(int argc, const char *argv[])
 {
 	(void)argv;
-	(void)argc;
-	return (TRUE);
+	return (argc == 5);
 }
-
-// void write_to_pipe(int *fd, const char *argv[], const char *env[])
-// {
-
-// 	return (1);
-// }
 
 int	child_process(int *fd, const char *argv[], const char *env[])
 {
@@ -29,8 +22,7 @@ int	child_process(int *fd, const char *argv[], const char *env[])
 		handle_errors(SAFETY, "child_process 29");
 	if (!redirect_stdin_and_stdout(infile, fd[WRITE_FD]))
 		handle_errors(FD_ERROR, "child_process 33");
-	close(fd[READ_FD]);
-	close(infile);
+	close_multiple(fd[READ_FD], infile);
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
 		handle_errors(MALLOC_ERROR, "child_process 36");
@@ -50,8 +42,7 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 		handle_errors(SAFETY, "parent_process");
 	if (!redirect_stdin_and_stdout(fd[READ_FD], outfile))
 		handle_errors(SAFETY, "parent_process");
-	close(fd[WRITE_FD]);
-	close(outfile);
+	close_multiple(fd[WRITE_FD], outfile);
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
 		handle_errors(MALLOC_ERROR, "parent_process");
@@ -66,18 +57,16 @@ void	run(int argc, const char *argv[], const char *env[])
 	int	fd[PIPE_BOTH_ENDS];
 
 	if (!is_valid_arguments(argc, argv) || pipe(fd) == ERROR)
-		handle_errors(1, "run");
+		handle_errors(1, "USAGE: ./pipex file1 cmd1 cmd2 file2");
 	pid[0] = fork();
 	if (pid[0] == ERROR)
 		handle_errors(ERROR, "main");
 	else if (pid[0] == CHILD_PROCESS_ID)
 		child_process(fd, argv, env);
 	pid[1] = fork();
-	parent_process(fd, argv, env);
-	waitpid(pid[0], NULL, 0);
-	waitpid(pid[1], NULL, 0);
-	close(fd[READ_FD]);
-	close(fd[WRITE_FD]);
-	(void)env;
+	if (pid[1] == CHILD_PROCESS_ID)
+		parent_process(fd, argv, env);
+	close_multiple(fd[READ_FD], fd[WRITE_FD]);
+	wait_multiple(&pid[0], (sizeof(pid) / sizeof(int)));
 	return ;
 }
