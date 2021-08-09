@@ -44,3 +44,4 @@ t_bool  is_valid_arguments(int argc, const char *argv[]);
 char    *get_executable_path(const char *env, const char *cmd);
 char	*ft_get_env_var(const char *env[], const char *env_variable);
 void	handle_errors(int error_code, char *location);
+int		redirect_stdin_and_stdout(int new_stdin, int new_stdout);

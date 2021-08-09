@@ -12,6 +12,12 @@ t_bool	is_valid_arguments(int argc, const char *argv[])
 	return (TRUE);
 }
 
+// void write_to_pipe(int *fd, const char *argv[], const char *env[])
+// {
+
+// 	return (1);
+// }
+
 int	child_process(int *fd, const char *argv[], const char *env[])
 {
 	const int	infile = open(argv[1], O_RDONLY);
@@ -20,16 +26,17 @@ int	child_process(int *fd, const char *argv[], const char *env[])
 	char		*path;
 
 	if (infile == ERROR || !cmd)
-		handle_errors(SAFETY, "child_process");
-	close(fd[READ_FD]);
+		handle_errors(SAFETY, "child_process 29");
 	if (!redirect_stdin_and_stdout(infile, fd[WRITE_FD]))
-		handle_errors(FD_ERROR, "child_process");
+		handle_errors(FD_ERROR, "child_process 33");
+	close(fd[READ_FD]);
+	close(infile);
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
-		handle_errors(MALLOC_ERROR, "child_process");
+		handle_errors(MALLOC_ERROR, "child_process 36");
 	if (execute_command(path, cmd, env) == ERROR)
-		handle_errors(EXECUTION_ERROR, "child_process");
-	return (0);
+		handle_errors(EXECUTION_ERROR, "child_process 38");
+	return (1);
 }
 
 int	parent_process(int *fd, const char *argv[], const char *env[])
@@ -41,15 +48,16 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 
 	if (!cmd || outfile == ERROR)
 		handle_errors(SAFETY, "parent_process");
-	close(fd[WRITE_FD]);
 	if (!redirect_stdin_and_stdout(fd[READ_FD], outfile))
 		handle_errors(SAFETY, "parent_process");
+	close(fd[WRITE_FD]);
+	close(outfile);
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
 		handle_errors(MALLOC_ERROR, "parent_process");
 	if (execute_command(path, cmd, env) == ERROR)
 		handle_errors(EXECUTION_ERROR, "parent_process");
-	return (0);
+	return (1);
 }
 
 void	run(int argc, const char *argv[], const char *env[])
@@ -64,15 +72,10 @@ void	run(int argc, const char *argv[], const char *env[])
 		handle_errors(ERROR, "main");
 	else if (pid[0] == CHILD_PROCESS_ID)
 		child_process(fd, argv, env);
-	else
-	{
-		// pid[] = fork();
-		// // if (pid == CHILD_PROCESS_ID)
-		// // 	child_process
-		waitpid(pid[0], NULL, 0);
-		// waitpid(pid[1], NULL, 0);
-		parent_process(fd, argv, env);
-	}
+	pid[1] = fork();
+	parent_process(fd, argv, env);
+	waitpid(pid[0], NULL, 0);
+	waitpid(pid[1], NULL, 0);
 	close(fd[READ_FD]);
 	close(fd[WRITE_FD]);
 	(void)env;
