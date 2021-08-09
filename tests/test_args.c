@@ -1,5 +1,5 @@
 #include "ctest.h"
-#include "../pipex.h"
+#include "../srcs/headers/pipex.h"
 
 // CTEST(check_arguments, invalid_amount)
 // {

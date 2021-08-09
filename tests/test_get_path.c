@@ -1,5 +1,5 @@
 #include "ctest.h"
-#include "../pipex.h"
+#include "../srcs/headers/get_exe_path.h"
 
 CTEST(test_get_path, does_not_exist)
 {
