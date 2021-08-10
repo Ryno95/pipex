@@ -1,7 +1,7 @@
 #ifndef DEFINES_H
 # define DEFINES_H
 
-#include "../utils/libft/libft.h"
+# include "../utils/libft/libft.h"
 
 # define CHILD_PROCESS_ID 0
 # define ERROR -1
@@ -35,7 +35,8 @@ typedef enum e_errors
 	FD_ERROR = 10,
 	MALLOC_ERROR = 11,
 	EXECUTION_ERROR = 12,
-	SAFETY = 13
+	SAFETY = 13,
+	PIPE_ERROR = 14
 }	t_errors;
 
 #endif

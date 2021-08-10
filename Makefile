@@ -6,7 +6,7 @@
 #    By: rmeiboom <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/05/15 16:56:30 by rmeiboom      #+#    #+#                  #
-#    Updated: 2021/08/09 13:34:25 by rmeiboom      ########   odam.nl          #
+#    Updated: 2021/08/10 19:56:37 by rmeiboom      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,25 +21,31 @@ FT_PRINTFDIR = srcs/utils/ft_printf/
 GNLDIR = srcs/utils/gnl/
 UTILSDIR = srcs/utils/
 
+MAIN_MAIN = main.o
+
 OBJ = $(GNLDIR)get_next_line.o $(GNLDIR)get_next_line_utils.o\
 		srcs/pipex.o srcs/pipex_utils.o srcs/handle_errors.o\
 		srcs/get_exe_path.o
 
 TEST_OBJ = tests/test_args.o tests/test_get_path.o
 
-CHECKER_OBJ = bonus/main.o
+BONUS_OBJ = srcs/bonus/main.o
+
+ifdef WITH_BONUS
+O_FILES = $(BONUS_OBJ) $(OBJ)
+else
+O_FILES = $(OBJ) $(MAIN_MAIN)
+endif
 
 all: $(NAME)
 
-$(NAME): $(OBJ) main.o
+$(NAME): $(O_FILES)
 		make -C $(LIBFTDIR)
 		make -C $(FT_PRINTFDIR)
-		$(CC) $(CFLAGS) $(OBJ) $(LIBS) main.c -o $(NAME)
+		$(CC) $(CFLAGS) $(O_FILES) $(LIBS) -o $(NAME)
 
-bonus: $(OBJ) $(CHECKER_OBJ)
-		make -C $(LIBFTDIR)
-		make -C $(FT_PRINTFDIR)
-		$(CC) $(CFLAGS) $(OBJ) $(CHECKER_OBJ) $(LIBS) -o $(CHECKER)
+bonus: 
+		$(MAKE) WITH_BONUS=1 all
 
 run: $(NAME)
 		./scripts/run.sh
@@ -47,16 +53,16 @@ run: $(NAME)
 run_tests: test
 		./$(TESTER)
 
-test: $(OBJ) $(TEST_OBJ)
+test: $(O_FILES) $(TEST_OBJ)
 	make -C $(LIBFTDIR)
 	make -C $(FT_PRINTFDIR)
-	$(CC) $(CFLAGS) $(OBJ) $(TEST_OBJ) $(LIBS) -o $(TESTER)
+	$(CC) $(CFLAGS) $(O_FILES) $(TEST_OBJ) $(LIBS) -o $(TESTER)
 
 %.o: %.c
 		$(CC) -c $(CFLAGS) -o $@ $<
 
 clean:
-		rm -f $(OBJ) $(TEST_OBJ) $(CHECKER_OBJ) norminette_result
+		rm -f $(O_FILES) $(TEST_OBJ) $(CHECKER_OBJ) norminette_result
 		rm -f main.o
 		make -C $(LIBFTDIR) fclean
 		make -C $(FT_PRINTFDIR) fclean

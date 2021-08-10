@@ -11,7 +11,7 @@ int	redirect_stdin_and_stdout(int new_stdin, int new_stdout)
 
 void	wait_multiple(int *pid, int length)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < length)
