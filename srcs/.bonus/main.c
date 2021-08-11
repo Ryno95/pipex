@@ -171,7 +171,11 @@ void	get_files(t_in_and_outfile *files, const char *argv[], int argc)
 		handle_errors(FD_ERROR, "get_outfile");
 }
 
-
+void	current_to_previous_pipe(t_multi_pipes *pipes)
+{
+	pipes->previous[READ_FD] = pipes->current[READ_FD];
+	pipes->previous[WRITE_FD] = pipes->current[WRITE_FD];
+}
 
 int main(int argc, const char *argv[], const char *env[])
 {
@@ -200,8 +204,8 @@ int main(int argc, const char *argv[], const char *env[])
 			// do child stuff 
 			close(currrent_pipe[WRITE_FD]);	
 		}
-		(void)previous_pipe;
-		// current_to_previous_pipe(currrent_pipe, previous_pipe);
+		// close fuuuuckiing fds fucker!
+		current_to_previous_pipe(&pipes);
 	}
 	while(wait(NULL));
 	return (0);
