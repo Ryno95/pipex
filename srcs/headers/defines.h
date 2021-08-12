@@ -40,21 +40,3 @@ typedef enum e_errors
 }	t_errors;
 
 #endif
-
-
-typedef struct t_redirection
-{
-	int in;
-	int out;
-	int err;
-};
-
-typedef struct t_command
-{
-	int type;
-	// char *arguments;
-	char *path = "/bin/ls"
-	char **argv = {"cat", "-e", "file.txt", ,NULL};
-	t_redirection *redirect;
-};
-

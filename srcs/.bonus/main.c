@@ -130,25 +130,30 @@ int	set_stdin(int new_std_in)
 
 void redirect_in_and_output(t_multi_pipes *pipes, t_in_and_outfile *files, int process, int num_of_processes)
 {
-	if (process == num_of_processes)
+	if (process == FIRST_PROCESS)
 	{
+		printf("First process in should be 0: %d\n", process);
+		if (set_stdin(files->infile) == ERROR)
+			handle_errors(FD_ERROR, "redirect, setting child output");
+	}
+	else
+	{
+		printf("Second process in should be 1: %d\n", process);
+		if(set_stdin(pipes->previous[READ_FD]) == ERROR)
+			handle_errors(FD_ERROR, "redirect, setting child input");
+	}
+
+	if (process == num_of_processes - 1)
+	{
+		printf("Last process out should be 1: %d\n", process);
 		if (!set_stdout(files->outfile))
 			handle_errors(FD_ERROR,"redirect, setting output to file");
 	}
 	else
 	{
+		printf("First process out should be 0: %d\n", process);
 		if (!set_stdout(pipes->current[WRITE_FD]))
 			handle_errors(FD_ERROR, "redirect, setting child output");
-	}
-	if (process == FIRST_PROCESS)
-	{
-		if (!set_stdout(files->infile))
-			handle_errors(FD_ERROR, "redirect, setting child output");
-	}
-	else
-	{
-		if(set_stdin(pipes->previous[READ_FD]) == ERROR)
-			handle_errors(FD_ERROR, "redirect, setting child input");
 	}
 }
 
@@ -188,14 +193,13 @@ void	child(const char *argv[], const char *env[])
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
 		handle_errors(MALLOC_ERROR, "child_process path allocation");
+	printf("performing command: %s\n", path);
 	if (execute_command(path, cmd, env) == ERROR)
 		handle_errors(EXECUTION_ERROR, "child_process execute command");
 }
 int main(int argc, const char *argv[], const char *env[])
 {
 	t_multi_pipes			pipes;
-	int 					currrent_pipe[PIPE_BOTH_ENDS];
-	int 					previous_pipe[PIPE_BOTH_ENDS];
 	const int				num_of_processes = argc - 3;
 	int						*pid;
 	t_in_and_outfile		files;
@@ -207,21 +211,28 @@ int main(int argc, const char *argv[], const char *env[])
 		handle_errors(MALLOC_ERROR, "main pid malloc");
 	for(int i = 0; i < num_of_processes; i++)
 	{
-		if (pipe(currrent_pipe) == ERROR)
+		if (pipe(pipes.current) == ERROR)
 			handle_errors(PIPE_ERROR, "pipe curretn main");
 		pid[i] = fork();
-		if (!pid[i])
+		if (pid[i] == ERROR)
 			handle_errors(ERROR, "forking main");
 		else if (pid[i] == CHILD_PROCESS_ID)
 		{
 			redirect_in_and_output(&pipes, &files, i, num_of_processes);
+			close(pipes.current[READ_FD]);
+			printf("doing process number: %d\n", i + 1);
+			child(argv, env);
 			// do child stuff 
-			close(currrent_pipe[WRITE_FD]);	
 		}
 		// close fuuuuckiing fds fucker!
-		close_multiple(fd[READ_FD], files.infile);
+		if (i != FIRST_PROCESS)
+			close(pipes.previous[READ_FD]);
+		close(pipes.current[WRITE_FD]);
 		current_to_previous_pipe(&pipes);
 	}
+	close_multiple(pipes.current[READ_FD], pipes.current[WRITE_FD]);
+	close_multiple(pipes.previous[READ_FD], pipes.previous[WRITE_FD]);
+	close_multiple(files.infile, files.outfile);
 	while(wait(NULL));
 	return (0);
 }

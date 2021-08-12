@@ -1,0 +1,3 @@
+doing process number: 2
+performing command: /usr/bin/grep
+int	main(int argc, const char *argv[], const char *env[])
