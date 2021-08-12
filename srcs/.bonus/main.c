@@ -177,6 +177,20 @@ void	current_to_previous_pipe(t_multi_pipes *pipes)
 	pipes->previous[WRITE_FD] = pipes->current[WRITE_FD];
 }
 
+void	child(const char *argv[], const char *env[])
+{
+ 	const char	*path_var = ft_get_env_var(env, PATH_ID);
+ 	const char	**cmd = (const char **)ft_split(argv[2], SPACE);
+ 	char		*path;
+
+	if (!cmd)
+		handle_errors(SAFETY, "child, invalid command");
+	path = get_executable_path(path_var, cmd[0]);
+	if (!path)
+		handle_errors(MALLOC_ERROR, "child_process path allocation");
+	if (execute_command(path, cmd, env) == ERROR)
+		handle_errors(EXECUTION_ERROR, "child_process execute command");
+}
 int main(int argc, const char *argv[], const char *env[])
 {
 	t_multi_pipes			pipes;
@@ -205,6 +219,7 @@ int main(int argc, const char *argv[], const char *env[])
 			close(currrent_pipe[WRITE_FD]);	
 		}
 		// close fuuuuckiing fds fucker!
+		close_multiple(fd[READ_FD], files.infile);
 		current_to_previous_pipe(&pipes);
 	}
 	while(wait(NULL));
