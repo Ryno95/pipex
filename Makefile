@@ -29,7 +29,7 @@ OBJ = $(GNLDIR)get_next_line.o $(GNLDIR)get_next_line_utils.o\
 
 TEST_OBJ = tests/test_args.o tests/test_get_path.o
 
-BONUS_OBJ = srcs/bonus/main.o
+BONUS_OBJ = srcs/.bonus/main.o
 
 ifdef WITH_BONUS
 O_FILES = $(BONUS_OBJ) $(OBJ)
