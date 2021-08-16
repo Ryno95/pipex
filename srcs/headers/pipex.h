@@ -16,6 +16,7 @@ void	run(int argc, const char *argv[], const char *env[]);
 t_bool	is_valid_arguments(int argc, const char *argv[]);
 void	handle_errors(int error_code, char *location);
 int		redirect_stdin_and_stdout(int new_stdin, int new_stdout);
-int		execute_command(const char *path, const char *argv[], const char *env[]);
+int		execute_command(const char *path,
+			const char *argv[], const char *env[]);
 
 #endif
