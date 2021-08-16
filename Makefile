@@ -6,7 +6,7 @@
 #    By: rmeiboom <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/05/15 16:56:30 by rmeiboom      #+#    #+#                  #
-#    Updated: 2021/08/10 19:56:37 by rmeiboom      ########   odam.nl          #
+#    Updated: 2021/08/16 14:46:01 by rmeiboom      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ FT_PRINTFDIR = srcs/utils/ft_printf/
 GNLDIR = srcs/utils/gnl/
 UTILSDIR = srcs/utils/
 
-MAIN_MAIN = main.o
+MAIN_MAIN = srcs/main.o
 
 OBJ = $(GNLDIR)get_next_line.o $(GNLDIR)get_next_line_utils.o\
 		srcs/pipex.o srcs/pipex_utils.o srcs/handle_errors.o\
@@ -29,7 +29,7 @@ OBJ = $(GNLDIR)get_next_line.o $(GNLDIR)get_next_line_utils.o\
 
 TEST_OBJ = tests/test_args.o tests/test_get_path.o
 
-BONUS_OBJ = srcs/.bonus/main.o
+BONUS_OBJ = srcs/bonus/main.o srcs/bonus/bonus_utils.o
 
 ifdef WITH_BONUS
 O_FILES = $(BONUS_OBJ) $(OBJ)
@@ -64,6 +64,7 @@ test: $(O_FILES) $(TEST_OBJ)
 clean:
 		rm -f $(O_FILES) $(TEST_OBJ) $(CHECKER_OBJ) norminette_result
 		rm -f main.o
+		rm -f $(BONUS_OBJ)
 		make -C $(LIBFTDIR) fclean
 		make -C $(FT_PRINTFDIR) fclean
 
