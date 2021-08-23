@@ -52,7 +52,7 @@ int	*run_processes(const char *argv[], const char *env[],
 	int						*pid;
 	int						i;
 
-	pid = (int *)malloc((num_of_processes + 1) * sizeof(int));
+	pid = (int *)ft_calloc((num_of_processes + 1), sizeof(int));
 	if (!pid)
 		handle_errors(MALLOC_ERROR, "main pid malloc");
 	i = 0;
