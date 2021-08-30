@@ -8,15 +8,11 @@
 
 static void	child(const char *argv[], const char *env[], int process)
 {
-	const char	*path_var = ft_get_env_var(env, PATH_ID);
 	const char	**cmd = (const char **)ft_split(argv[process + 2], SPACE);
-	char		*path;
+	const char	*path = get_executable_path(env, cmd[0]);
 
-	if (!cmd)
+	if (!cmd || !path)
 		handle_errors(SAFETY, "child, invalid command");
-	path = get_executable_path(path_var, cmd[0]);
-	if (!path)
-		handle_errors(MALLOC_ERROR, "child_process path allocation");
 	if (execute_command(path, cmd, env) == ERROR)
 		handle_errors(EXECUTION_ERROR, "child_process execute command");
 }

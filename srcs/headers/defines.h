@@ -8,8 +8,10 @@
 # define PERMISSIONS 0644
 # define SPACE ' '
 # define COLON ':'
-# define FORWARD_SLASH "/\0"
+# define FORWARD_SLASH '/'
 # define PATH_ID "PATH="
+# define CMD_BUFFER_SIZE 4096
+# define TERMINATOR 1
 
 typedef enum e_pipe_fds
 {
