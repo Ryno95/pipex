@@ -1,6 +1,5 @@
 #ifndef BONUS_UTILS_H
 # define BONUS_UTILS_H
-
 # define FIRST_PROCESS 0
 # define NO_FILE -5
 # define DEFAULT_WAIT_ID -1

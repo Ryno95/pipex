@@ -20,10 +20,10 @@ int	child_process(int *fd, const char *argv[], const char *env[])
 	if (infile == ERROR || !cmd || !path)
 		handle_errors(SAFETY, "child_process 29");
 	if (!redirect_stdin_and_stdout(infile, fd[WRITE_FD]))
-		handle_errors(FD_ERROR, "child_process 33");
+		handle_errors(FD_ERROR, "child_process 24");
 	close_multiple(fd[READ_FD], infile);
 	if (execute_command(path, cmd, env) == ERROR)
-		handle_errors(EXECUTION_ERROR, "child_process 38");
+		handle_errors(EXECUTION_ERROR, "child_process 30");
 	return (1);
 }
 
@@ -36,10 +36,10 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 	if (!cmd || outfile == ERROR || !path)
 		handle_errors(SAFETY, "parent_process");
 	if (!redirect_stdin_and_stdout(fd[READ_FD], outfile))
-		handle_errors(SAFETY, "parent_process");
+		handle_errors(SAFETY, "parent_process 44");
 	close_multiple(fd[WRITE_FD], outfile);
 	if (execute_command(path, cmd, env) == ERROR)
-		handle_errors(EXECUTION_ERROR, "parent_process");
+		handle_errors(EXECUTION_ERROR, "parent_process 50");
 	return (1);
 }
 
