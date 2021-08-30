@@ -6,7 +6,7 @@
 #include "../headers/pipex.h"
 #include <stdio.h> 
 
-void	child(const char *argv[], const char *env[], int process)
+static void	child(const char *argv[], const char *env[], int process)
 {
 	const char	*path_var = ft_get_env_var(env, PATH_ID);
 	const char	**cmd = (const char **)ft_split(argv[process + 2], SPACE);
@@ -21,7 +21,7 @@ void	child(const char *argv[], const char *env[], int process)
 		handle_errors(EXECUTION_ERROR, "child_process execute command");
 }
 
-int	create_new_process(t_multi_pipes *pipes)
+static int	create_new_process(t_multi_pipes *pipes)
 {
 	int	pid;
 
@@ -33,33 +33,30 @@ int	create_new_process(t_multi_pipes *pipes)
 	return (pid);
 }
 
-void	wait_for_all_processes(int *pid, int num_of_processes)
+static void	wait_for_all_processes(int num_of_processes)
 {
 	int	i;
 
 	i = 0;
 	while (i < num_of_processes)
 	{
-		waitpid(pid[i], NULL, 0);
+		waitpid(DEFAULT_ID, NULL, 0);
 		i++;
 	}
 }
 
-int	*run_processes(const char *argv[], const char *env[],
+static int	run_processes(const char *argv[], const char *env[],
 	int num_of_processes, t_in_and_outfile *files)
 {
 	t_multi_pipes			pipes;
-	int						*pid;
+	int						pid;
 	int						i;
 
-	pid = (int *)malloc((num_of_processes + 1) * sizeof(int));
-	if (!pid)
-		handle_errors(MALLOC_ERROR, "main pid malloc");
 	i = 0;
 	while (i < num_of_processes)
 	{
-		pid[i] = create_new_process(&pipes);
-		if (pid[i] == CHILD_PROCESS_ID)
+		pid = create_new_process(&pipes);
+		if (pid == CHILD_PROCESS_ID)
 		{
 			redirect_in_and_output(&pipes, files, i, num_of_processes);
 			child(argv, env, i);
@@ -70,19 +67,17 @@ int	*run_processes(const char *argv[], const char *env[],
 		current_to_previous_pipe(&pipes);
 		i++;
 	}
-	return (pid);
+	return (1);
 }
 
 int	main(int argc, const char *argv[], const char *env[])
 {
 	const int				num_of_processes = argc - 3;
-	int						*pid;
 	t_in_and_outfile		files;
 
 	get_files(&files, argv, argc);
-	pid = run_processes(argv, env, num_of_processes, &files);
+	run_processes(argv, env, num_of_processes, &files);
 	close_multiple(files.infile, files.outfile);
-	wait_for_all_processes(pid, num_of_processes);
-	free(pid);
+	wait_for_all_processes(num_of_processes);
 	return (0);
 }

@@ -4,6 +4,7 @@
 # define FIRST_PROCESS 0
 # define NO_FILE -5
 # define HERE_DOC "here_doc"
+# define DEFAULT_ID -1
 
 # include "../headers/defines.h"
 

@@ -19,15 +19,15 @@ int	child_process(int *fd, const char *argv[], const char *env[])
 	char		*path;
 
 	if (infile == ERROR || !cmd)
-		handle_errors(SAFETY, "child_process 29");
+		handle_errors(SAFETY, "child_process 22");
 	if (!redirect_stdin_and_stdout(infile, fd[WRITE_FD]))
-		handle_errors(FD_ERROR, "child_process 33");
+		handle_errors(FD_ERROR, "child_process 24");
 	close_multiple(fd[READ_FD], infile);
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
-		handle_errors(MALLOC_ERROR, "child_process 36");
+		handle_errors(MALLOC_ERROR, "child_process 28");
 	if (execute_command(path, cmd, env) == ERROR)
-		handle_errors(EXECUTION_ERROR, "child_process 38");
+		handle_errors(EXECUTION_ERROR, "child_process 30");
 	return (1);
 }
 
@@ -39,15 +39,15 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 	char		*path;
 
 	if (!cmd || outfile == ERROR)
-		handle_errors(SAFETY, "parent_process");
+		handle_errors(SAFETY, "parent_process 42");
 	if (!redirect_stdin_and_stdout(fd[READ_FD], outfile))
-		handle_errors(SAFETY, "parent_process");
+		handle_errors(SAFETY, "parent_process 44");
 	close_multiple(fd[WRITE_FD], outfile);
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
-		handle_errors(MALLOC_ERROR, "parent_process");
+		handle_errors(MALLOC_ERROR, "parent_process 48");
 	if (execute_command(path, cmd, env) == ERROR)
-		handle_errors(EXECUTION_ERROR, "parent_process");
+		handle_errors(EXECUTION_ERROR, "parent_process 50");
 	return (1);
 }
 
