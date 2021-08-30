@@ -8,15 +8,11 @@
 
 static void	child(const char *argv[], const char *env[], int process)
 {
-	const char	*path_var = ft_get_env_var(env, PATH_ID);
 	const char	**cmd = (const char **)ft_split(argv[process + 2], SPACE);
-	char		*path;
+	const char	*path = get_executable_path(env, cmd[0]);
 
-	if (!cmd)
+	if (!cmd || !path)
 		handle_errors(SAFETY, "child, invalid command");
-	path = get_executable_path(path_var, cmd[0]);
-	if (!path)
-		handle_errors(MALLOC_ERROR, "child_process path allocation");
 	if (execute_command(path, cmd, env) == ERROR)
 		handle_errors(EXECUTION_ERROR, "child_process execute command");
 }
@@ -40,7 +36,7 @@ static void	wait_for_all_processes(int num_of_processes)
 	i = 0;
 	while (i < num_of_processes)
 	{
-		waitpid(DEFAULT_ID, NULL, 0);
+		waitpid(DEFAULT_WAIT_ID, NULL, 0);
 		i++;
 	}
 }
@@ -75,6 +71,8 @@ int	main(int argc, const char *argv[], const char *env[])
 	const int				num_of_processes = argc - 3;
 	t_in_and_outfile		files;
 
+	if (argc < 4 || num_of_processes < 1)
+		handle_errors(SAFETY, "USAGE: ./pipex file1 cmd1 cmd2 cmd... file2");
 	get_files(&files, argv, argc);
 	run_processes(argv, env, num_of_processes, &files);
 	close_multiple(files.infile, files.outfile);

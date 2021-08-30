@@ -14,18 +14,14 @@ t_bool	is_valid_arguments(int argc, const char *argv[])
 int	child_process(int *fd, const char *argv[], const char *env[])
 {
 	const int	infile = open(argv[1], O_RDONLY);
-	const char	*path_var = ft_get_env_var(env, PATH_ID);
 	const char	**cmd = (const char **)ft_split(argv[2], SPACE);
-	char		*path;
+	const char	*path = get_executable_path(env, cmd[0]);
 
-	if (infile == ERROR || !cmd)
-		handle_errors(SAFETY, "child_process 22");
+	if (infile == ERROR || !cmd || !path)
+		handle_errors(SAFETY, "child_process 29");
 	if (!redirect_stdin_and_stdout(infile, fd[WRITE_FD]))
 		handle_errors(FD_ERROR, "child_process 24");
 	close_multiple(fd[READ_FD], infile);
-	path = get_executable_path(path_var, cmd[0]);
-	if (!path)
-		handle_errors(MALLOC_ERROR, "child_process 28");
 	if (execute_command(path, cmd, env) == ERROR)
 		handle_errors(EXECUTION_ERROR, "child_process 30");
 	return (1);
@@ -35,17 +31,13 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 {
 	const int	outfile = open(argv[4], O_WRONLY | O_CREAT, PERMISSIONS);
 	const char	**cmd = (const char **)ft_split(argv[3], SPACE);
-	const char	*path_var = ft_get_env_var(env, PATH_ID);
-	char		*path;
+	const char	*path = get_executable_path(env, cmd[0]);
 
-	if (!cmd || outfile == ERROR)
-		handle_errors(SAFETY, "parent_process 42");
+	if (!cmd || outfile == ERROR || !path)
+		handle_errors(SAFETY, "parent_process");
 	if (!redirect_stdin_and_stdout(fd[READ_FD], outfile))
 		handle_errors(SAFETY, "parent_process 44");
 	close_multiple(fd[WRITE_FD], outfile);
-	path = get_executable_path(path_var, cmd[0]);
-	if (!path)
-		handle_errors(MALLOC_ERROR, "parent_process 48");
 	if (execute_command(path, cmd, env) == ERROR)
 		handle_errors(EXECUTION_ERROR, "parent_process 50");
 	return (1);
@@ -57,7 +49,7 @@ void	run(int argc, const char *argv[], const char *env[])
 	int	fd[PIPE_BOTH_ENDS];
 
 	if (!is_valid_arguments(argc, argv) || pipe(fd) == ERROR)
-		handle_errors(1, "USAGE: ./pipex file1 cmd1 cmd2 file2");
+		handle_errors(SAFETY, "USAGE: ./pipex file1 cmd1 cmd2 file2");
 	pid[0] = fork();
 	if (pid[0] == ERROR)
 		handle_errors(ERROR, "main");

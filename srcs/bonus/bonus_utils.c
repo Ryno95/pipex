@@ -40,14 +40,9 @@ void	get_files(t_in_and_outfile *files, const char *argv[], int argc)
 	const char	*infile = (char *)argv[1];
 	char		*outfile;
 
-	if (ft_strncmp(infile, HERE_DOC, ft_strlen(infile)) == 0)
-		files->infile = -3;
-	else
-	{
-		files->infile = open(infile, O_RDONLY);
-		if (files->infile == ERROR)
-			handle_errors(FD_ERROR, "get_infile");
-	}
+	files->infile = open(infile, O_RDONLY);
+	if (files->infile == ERROR)
+		handle_errors(FD_ERROR, NULL);
 	outfile = (char *)argv[argc - 1];
 	files->outfile = open(outfile, O_WRONLY | O_CREAT, PERMISSIONS);
 	if (files->outfile == ERROR)

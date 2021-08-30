@@ -4,7 +4,6 @@
 # include "defines.h"
 # include <unistd.h>
 
-char	*ft_get_env_var(const char *env[], const char *env_variable);
-char	*get_executable_path(const char *env_var, const char *cmd);
+char	*get_executable_path(const char *env[], const char *command);
 
 #endif

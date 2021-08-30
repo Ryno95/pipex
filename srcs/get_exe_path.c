@@ -1,44 +1,59 @@
 #include "headers/defines.h"
+#include "headers/pipex_utils.h"
 #include "utils/gnl/get_next_line.h"
 #include <unistd.h>
 
-char	*ft_get_env_var(const char *env[], const char *env_variable)
+static void	append_command_to_path(char	*buffer, const char *command)
 {
-	const int	var_len = ft_strlen(env_variable);
-	int			i;
+	const int	cmd_len = ft_strlen(command) + TERMINATOR;
 
-	if (!env || !env_variable)
-		return (NULL);
-	i = 0;
-	while (env[i])
-	{
-		if (ft_strncmp(env[i], env_variable, var_len) == 0)
-			return (((char *)env[i]) + var_len);
-		i++;
-	}
-	return (NULL);
+	*buffer = FORWARD_SLASH;
+	buffer += 1;
+	ft_strlcpy(buffer, command, cmd_len);
 }
 
-char	*get_executable_path(const char *env_var, const char *cmd)
+static int	get_sub_path_len(const char *path)
 {
-	char	**split_paths;
-	char	*path_and_exe;
-	int		i;
+	int	i;
 
-	split_paths = ft_split(env_var, COLON);
-	if (!split_paths || ! cmd)
-		return (NULL);
 	i = 0;
-	while (split_paths[i])
-	{
-		path_and_exe = ft_strjoin(split_paths[i], FORWARD_SLASH);
-		path_and_exe = ft_gnl_strjoin(path_and_exe, (char *)cmd);
-		if (!path_and_exe)
-			return (NULL);
-		if (access(path_and_exe, F_OK) == F_OK)
-			return (path_and_exe);
-		free(path_and_exe);
+	while (path && path[i] != '\0' && path[i] != COLON)
 		i++;
+	return (i);
+}
+
+static void	copy_possible_path_to_buffer(const char *all_paths,
+		char *buffer, int size)
+{
+	ft_strlcpy(buffer, all_paths, size + TERMINATOR);
+}
+
+int	is_executable(char *full_path_executable)
+{
+	return (access(full_path_executable, F_OK));
+}
+
+char	*get_executable_path(const char *env[], const char *command)
+{
+	const char	*all_paths = ft_get_env_var(env, PATH_ID);
+	char		buffer[CMD_BUFFER_SIZE];
+	int			single_path_len;
+
+	if (!command || !all_paths)
+		return (NULL);
+	else if (ft_strchr(command, FORWARD_SLASH)
+		&& is_executable((char *) command) == F_OK)
+		return (ft_strdup(command));
+	while (all_paths && *all_paths)
+	{
+		single_path_len = get_sub_path_len(all_paths);
+		copy_possible_path_to_buffer(all_paths, &buffer[0], single_path_len);
+		append_command_to_path(&buffer[single_path_len], command);
+		if (is_executable(buffer) == F_OK)
+			return (ft_strdup(&buffer[0]));
+		all_paths += single_path_len;
+		if (*all_paths == COLON)
+			++all_paths;
 	}
 	return (NULL);
 }
