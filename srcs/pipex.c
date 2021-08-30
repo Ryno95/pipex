@@ -45,7 +45,11 @@ int	parent_process(int *fd, const char *argv[], const char *env[])
 	close_multiple(fd[WRITE_FD], outfile);
 	path = get_executable_path(path_var, cmd[0]);
 	if (!path)
+	{
+		free(path);
+		ft_free_split((char **)cmd);
 		handle_errors(MALLOC_ERROR, "parent_process");
+	}
 	if (execute_command(path, cmd, env) == ERROR)
 		handle_errors(EXECUTION_ERROR, "parent_process");
 	return (1);
@@ -57,7 +61,7 @@ void	run(int argc, const char *argv[], const char *env[])
 	int	fd[PIPE_BOTH_ENDS];
 
 	if (!is_valid_arguments(argc, argv) || pipe(fd) == ERROR)
-		handle_errors(1, "USAGE: ./pipex file1 cmd1 cmd2 file2");
+		handle_errors(SAFETY, "USAGE: ./pipex file1 cmd1 cmd2 file2");
 	pid[0] = fork();
 	if (pid[0] == ERROR)
 		handle_errors(ERROR, "main");

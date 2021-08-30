@@ -1,21 +1,6 @@
 #include "ctest.h"
 #include "../srcs/headers/get_exe_path.h"
 
-/*
-
-/bins/cmd
-cmd
-/../../bin/cmd
-/bin/cmd
-/bins/cmd
-/bin/wrngcmd/
-/sbin/cmd
-/almostrightpath/cmd
-almostcmd
-
-
-*/
-
 CTEST(test_get_path, does_not_exist)
 {
     ASSERT_NULL(get_executable_path(NULL, "ls"));
